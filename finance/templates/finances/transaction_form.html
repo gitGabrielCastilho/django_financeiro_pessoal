@@ -1,0 +1,66 @@
+{% extends 'finances/base.html' %}
+{% load form_tags %}
+
+{% block title %}Transaction Form{% endblock %}
+
+{% block content %}
+<h1 class="mt-5">Transaction Form</h1>
+<form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    <div class="form-group mb-3">
+        <label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>
+        {{ form.amount|add_class:"form-control" }}
+        <div class="invalid-feedback">
+            Please provide a valid amount.
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <label for="{{ form.date.id_for_label }}">{{ form.date.label }}</label>
+        {{ form.date|add_class:"form-control" }}
+        <div class="invalid-feedback">
+            Please provide a valid date.
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+        {{ form.category|add_class:"form-control" }}
+        <div class="invalid-feedback">
+            Please select a category.
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <label for="{{ form.transaction_type.id_for_label }}">{{ form.transaction_type.label }}</label>
+        {{ form.transaction_type|add_class:"form-control" }}
+        <div class="invalid-feedback">
+            Please select a transaction type.
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+        {{ form.description|add_class:"form-control" }}
+        <div class="invalid-feedback">
+            Please provide a description.
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'transaction_list' %}" class="btn btn-secondary">Back to Transactions</a>
+</form>
+
+<script>
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}
