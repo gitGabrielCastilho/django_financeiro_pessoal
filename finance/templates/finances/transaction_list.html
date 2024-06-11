@@ -4,6 +4,56 @@
 
 {% block content %}
 <h1 class="mt-5">Transactions</h1>
+
+<!-- Formulário de Filtro de Datas -->
+<form method="get" class="mb-3">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="id_start_date">Start Date:</label>
+                {{ form.start_date }}
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="id_end_date">End Date:</label>
+                {{ form.end_date }}
+            </div>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
+
+<!-- Seções de Despesas, Receitas e Saldo -->
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="card text-white bg-danger">
+            <div class="card-header">Total Expenses</div>
+            <div class="card-body">
+                <h5 class="card-title">${{ total_expenses }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-header">Total Income</div>
+            <div class="card-body">
+                <h5 class="card-title">${{ total_income }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-header">Current Balance</div>
+            <div class="card-body">
+                <h5 class="card-title">${{ current_balance }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
 <a href="{% url 'transaction_create' %}" class="btn btn-primary mb-3">Add Transaction</a>
 <a href="{% url 'category_list' %}" class="btn btn-secondary mb-3">Manage Categories</a>
 <table class="table table-striped">

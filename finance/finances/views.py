@@ -1,10 +1,37 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Sum
 from .models import Category, Transaction
-from .forms import CategoryForm, TransactionForm
+from .forms import CategoryForm, TransactionForm, DateFilterForm
 
 def transaction_list(request):
     transactions = Transaction.objects.all()
-    return render(request, 'finances/transaction_list.html', {'transactions': transactions})
+    total_expenses = transactions.filter(transaction_type='expense').aggregate(total=Sum('amount'))['total'] or 0
+    total_income = transactions.filter(transaction_type='income').aggregate(total=Sum('amount'))['total'] or 0
+    current_balance = total_income - total_expenses
+
+    if request.method == 'GET':
+        form = DateFilterForm(request.GET)
+        if form.is_valid():
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+            if start_date:
+                transactions = transactions.filter(date__gte=start_date)
+            if end_date:
+                transactions = transactions.filter(date__lte=end_date)
+            total_expenses = transactions.filter(transaction_type='expense').aggregate(total=Sum('amount'))['total'] or 0
+            total_income = transactions.filter(transaction_type='income').aggregate(total=Sum('amount'))['total'] or 0
+            current_balance = total_income - total_expenses
+    else:
+        form = DateFilterForm()
+
+    return render(request, 'finances/transaction_list.html', {
+        'transactions': transactions,
+        'total_expenses': total_expenses,
+        'total_income': total_income,
+        'current_balance': current_balance,
+        'form': form
+    })
+
 
 def transaction_create(request):
     if request.method == 'POST':
@@ -33,6 +60,7 @@ def transaction_delete(request, pk):
         transaction.delete()
         return redirect('transaction_list')
     return render(request, 'finances/transaction_confirm_delete.html', {'transaction': transaction})
+
 
 def category_list(request):
     categories = Category.objects.all()
